@@ -51,7 +51,7 @@ int main()
   char kodeInput[10];
   int totalHarga = 0;
 
-  // Tampilkan tulisan "Sistem Kasir" dengan bintang
+  // Tampilkan tulisan "APLIKASI KASIR" dalam layar
   headerAplikasi();
 
   printf("=== Sistem Kasir Sederhana ===\n");
