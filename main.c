@@ -3,6 +3,14 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define RESET "\033[0m"
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define YELLOW "\033[33m"
+#define BLUE "\033[34m"
+#define MAGENTA "\033[35m"
+#define CYAN "\033[36m"
+
 struct Waktu
 {
     int tahun;
@@ -43,7 +51,7 @@ int indexPenjualanHarian = 0;
 // Fungsi untuk menambahkan data penjualan harian
 void tambahPenjualanHarian(int totalPenjualan, int labaRugi, struct Waktu waktu)
 {
-    printf("\n=== Penjualan Harian ===\n");
+    printf(BLUE"\n=== Penjualan Harian ===\n"RESET);
     penjualanHarian[indexPenjualanHarian].waktu = waktu;
     penjualanHarian[indexPenjualanHarian].totalPenjualan = totalPenjualan;
     penjualanHarian[indexPenjualanHarian].labaRugi = labaRugi;
@@ -62,8 +70,8 @@ void hitungLabaRugiHarian(struct Barang daftarBarang[], int jumlahBarang, struct
         totalLabaRugi += (daftarBarang[i].hargaJual - daftarBarang[i].hargaBeli) * daftarBarang[i].totalTerjual;
     }
 
-    printf("\n=== Laba Rugi Harian ===\n");
-    printf("Laba Rugi pada %d-%d-%d: Rp%d\n", waktu.tahun, waktu.bulan, waktu.tanggal, totalLabaRugi);
+    printf(GREEN"\n=== Laba Rugi Harian ===\n");
+    printf("Laba Rugi pada %d-%d-%d: Rp%d\n", waktu.tahun, waktu.bulan, waktu.tanggal, totalLabaRugi - (daftarBarang[0].hargaBeli * daftarBarang[0].totalTerjual));
 
     tambahPenjualanHarian(totalPenjualan, totalLabaRugi, waktu);
 }
@@ -92,7 +100,7 @@ void analisisPenjualanBulanan(struct Waktu waktu)
     int totalPenjualanBulan = 0;
     int labaRugiBulan = 0;
 
-    printf("\n=== Analisis Penjualan Bulanan ===\n");
+    printf(GREEN"\n=== Analisis Penjualan Bulanan ===\n" RESET);
     for (int i = 0; i < indexPenjualanHarian; i++)
     {
         if (penjualanHarian[i].waktu.bulan == waktu.bulan && penjualanHarian[i].waktu.tahun == waktu.tahun)
@@ -114,6 +122,23 @@ void checkLabaRugi(struct Barang daftarBarang[], int jumlahBarang, struct Waktu 
     int labaRugi = totalPenjualan - (daftarBarang[0].hargaBeli * daftarBarang[0].totalTerjual);
     printf("\n=== Laba Rugi Harian ===\n");
     printf("Laba Rugi dari %d-%d-%d: Rp%d\n", waktu.tahun, waktu.bulan, waktu.tanggal, labaRugi);
+}
+
+void rekapPenjualan(struct PenjualanHarian penjualanHarian[], int jumlahHari) {
+    printf(BLUE"\n=== Rekapan Penjualan ===\n"RESET);
+    printf("%-10s %-15s %-15s\n", "Tanggal", "Total Penjualan", "Laba/Rugi");
+    printf("--------------------------------------------\n");
+
+    for (int i = 0; i < jumlahHari; i++) {
+        printf("%4d-%02d-%02d %-15d %-15d\n",
+               penjualanHarian[i].waktu.tahun,
+               penjualanHarian[i].waktu.bulan,
+               penjualanHarian[i].waktu.tanggal,
+               penjualanHarian[i].totalPenjualan,
+               penjualanHarian[i].labaRugi);
+    }
+
+    printf("--------------------------------------------\n");
 }
 
 void menuPembeli(struct Barang daftarBarang[], int jumlahBarang)
@@ -147,6 +172,18 @@ void menuPembeli(struct Barang daftarBarang[], int jumlahBarang)
 
                 totalHarga += daftarBarang[i].hargaJual * jumlah;
                 barangDitemukan = 1;
+
+                // mengurangi stok barang berdasarkan jumlah yang dibeli
+                daftarBarang[i].stok -= jumlah;
+
+                if (daftarBarang[i].stok < 0)
+                {
+                    printf("Stok barang tidak cukup.\n");
+                    daftarBarang[i].stok += jumlah;
+                    continue;
+                }
+
+                
 
                 strcpy(daftarPembelian[indexPembelian].nama, daftarBarang[i].nama);
                 daftarPembelian[indexPembelian].harga = daftarBarang[i].hargaJual;
@@ -184,13 +221,9 @@ void menuPembeli(struct Barang daftarBarang[], int jumlahBarang)
     printf("Terima kasih telah berbelanja!\n");
 }
 
-void analisisPenjualan(struct Barang daftarBarang[], int jumlahBarang, struct Waktu waktu)
+void analisisPenjualan()
 {
-    printf("\n=== Analisis Penjualan Harian, Mingguan, dan Bulanan ===\n");
-    for (int i = 0; i < jumlahBarang; i++)
-    {
-        printf("%-20s : Total Terjual: %d\n", daftarBarang[i].nama, daftarBarang[i].totalTerjual);
-    }
+    rekapPenjualan(penjualanHarian, indexPenjualanHarian);
 }
 
 void produkTerlaris(struct Barang daftarBarang[], int jumlahBarang)
@@ -230,52 +263,44 @@ void analisisStok(struct Barang daftarBarang[], int jumlahBarang)
     }
 }
 
-void menuAnalisisPenjual(struct Barang daftarBarang[], int jumlahBarang, struct Waktu waktu)
-{
+void menuAnalisisPenjual(struct Barang daftarBarang[], int jumlahBarang, struct Waktu waktu) {
     int pilihan;
-    while (1)
-    {
+    while (1) {
         printf("\n=== Menu Analisis Penjualan ===\n");
-        printf("1. Penjualan Harian, Mingguan, dan Bulanan\n");
-        printf("2. Produk Terlaris\n");
-        printf("3. Produk dengan Penjualan Rendah\n");
-        printf("4. Analisis Stok Produk\n");
-        printf("5. Laba Rugi Harian\n");
+        printf("1. Analisis Penjualan Harian\n");
+        printf("2. Analisis Penjualan Mingguan\n");
+        printf("3. Analisis Penjualan Bulanan\n");
+        printf("4. Produk Terlaris\n");
+        printf("5. Produk dengan Penjualan Rendah\n");
+        printf("6. Analisis Stok Produk\n");
         printf("0. Kembali ke Menu Utama\n");
 
         printf("Masukkan pilihan Anda: ");
         scanf("%d", &pilihan);
 
-        switch (pilihan)
-        {
-        case 1:
-            analisisPenjualan(daftarBarang, jumlahBarang, waktu);
-            break;
-        case 2:
-            produkTerlaris(daftarBarang, jumlahBarang);
-            break;
-        case 3:
-            produkPenjualanRendah(daftarBarang, jumlahBarang);
-            break;
-        case 4:
-            analisisStok(daftarBarang, jumlahBarang);
-            break;
-        case 5:
-            checkLabaRugi(daftarBarang, jumlahBarang, waktu);
-            break;
-        case 6:
-            hitungLabaRugiHarian(daftarBarang, jumlahBarang, waktu);
-            break;
-        case 7:
-            analisisPenjualanMingguan();
-            break;
-        case 8:
-            analisisPenjualanBulanan(waktu);
-            break;
-        case 0:
-            return;
-        default:
-            printf("Pilihan tidak valid.\n");
+        switch (pilihan) {
+            case 1:
+                hitungLabaRugiHarian(daftarBarang, jumlahBarang, waktu);
+                break;
+            case 2:
+                analisisPenjualanMingguan();
+                break;
+            case 3:
+                analisisPenjualanBulanan(waktu);
+                break;
+            case 4:
+                produkTerlaris(daftarBarang, jumlahBarang);
+                break;
+            case 5:
+                produkPenjualanRendah(daftarBarang, jumlahBarang);
+                break;
+            case 6:
+                analisisStok(daftarBarang, jumlahBarang);
+                break;
+            case 0:
+                return;
+            default:
+                printf("Pilihan tidak valid.\n");
         }
     }
 }
