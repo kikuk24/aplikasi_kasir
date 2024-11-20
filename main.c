@@ -336,7 +336,7 @@ int main()
 
     while (1)
     {
-        printf("\n=== Menu Utama ===\n");
+        printf(CYAN"\n=== Menu Utama ===\n");
         printf("1. Sebagai Pembeli\n");
         printf("2. Sebagai Penjual\n");
         printf("0. Keluar\n");
@@ -353,7 +353,7 @@ int main()
         }
         else if (pilihan == 0)
         {
-            printf("Terima kasih telah menggunakan aplikasi kasir ini!\n");
+            printf("Terima kasih telah menggunakan aplikasi kasir ini!\n"RESET);
             break;
         }
         else
