@@ -39,7 +39,8 @@ typedef struct
     int jumlah;
     int totalHarga;
 } Pembelian;
-
+void barangTerlaris(Barang daftarBarang[], int jumlahBarang);
+void barangTidakLaris(Barang daftarBarang[], int jumlahBarang);
 // Fungsi mendapatkan tanggal hari ini
 void today(Waktu *waktu, bool manual)
 {
@@ -90,15 +91,18 @@ int muatDariCSV(Barang daftarBarang[], const char *filename)
 }
 
 // Fungsi menyimpan data barang ke file CSV
-void simpanKeCSV(Barang daftarBarang[], int jumlahBarang, const char *filename) {
+void simpanKeCSV(Barang daftarBarang[], int jumlahBarang, const char *filename)
+{
     FILE *file = fopen(filename, "w");
-    if (!file) {
+    if (!file)
+    {
         printf(RED "Gagal membuka file CSV untuk menyimpan data.\n" RESET);
         return;
     }
 
     fprintf(file, "Kode Barang,Nama Barang,Harga Jual,Stok,Harga Beli,Total Terjual\n");
-    for (int i = 0; i < jumlahBarang; i++) {
+    for (int i = 0; i < jumlahBarang; i++)
+    {
         fprintf(file, "%s,%s,%d,%d,%d,%d\n",
                 daftarBarang[i].kode,
                 daftarBarang[i].nama,
@@ -108,7 +112,7 @@ void simpanKeCSV(Barang daftarBarang[], int jumlahBarang, const char *filename) 
                 daftarBarang[i].totalTerjual);
     }
     fclose(file);
-    printf(GREEN "Stok barang terbaru berhasil disimpan ke %s\n" RESET, filename);
+    printf(GREEN "Data barang berhasil disimpan ke file %s.\n" RESET, filename);
 }
 
 // Fungsi menambah barang baru
@@ -179,7 +183,8 @@ void simpanTransaksiCSV(const char *filename, Pembelian daftarPembelian[], int j
 }
 
 // Fungsi untuk menu pembelian
-void menuPembeli(Barang daftarBarang[], int jumlahBarang, const char *transaksiFile, const char *barangFile) {
+void menuPembeli(Barang daftarBarang[], int jumlahBarang, const char *transaksiFile, const char *barangFile)
+{
     Pembelian daftarPembelian[100];
     int indexPembelian = 0, totalHarga = 0;
     char kodeInput[10];
@@ -187,24 +192,29 @@ void menuPembeli(Barang daftarBarang[], int jumlahBarang, const char *transaksiF
     today(&waktu, false);
 
     printf("\n=== Sistem Kasir ===\n");
-    while (1) {
+    while (1)
+    {
         printf("\nMasukkan kode barang (atau 'selesai' untuk menyelesaikan transaksi): ");
         scanf("%9s", kodeInput);
 
-        if (strcmp(kodeInput, "selesai") == 0) {
+        if (strcmp(kodeInput, "selesai") == 0)
+        {
             break;
         }
 
         bool barangDitemukan = false;
-        for (int i = 0; i < jumlahBarang; i++) {
-            if (strcmp(kodeInput, daftarBarang[i].kode) == 0) {
+        for (int i = 0; i < jumlahBarang; i++)
+        {
+            if (strcmp(kodeInput, daftarBarang[i].kode) == 0)
+            {
                 printf("Barang ditemukan: %s, Harga: Rp%d\n", daftarBarang[i].nama, daftarBarang[i].hargaJual);
 
                 int jumlah;
                 printf("Masukkan jumlah barang yang dibeli: ");
                 scanf("%d", &jumlah);
 
-                if (jumlah > daftarBarang[i].stok) {
+                if (jumlah > daftarBarang[i].stok)
+                {
                     printf(RED "Stok tidak cukup.\n" RESET);
                     break;
                 }
@@ -229,7 +239,8 @@ void menuPembeli(Barang daftarBarang[], int jumlahBarang, const char *transaksiF
             }
         }
 
-        if (!barangDitemukan) {
+        if (!barangDitemukan)
+        {
             printf(YELLOW "Kode barang tidak ditemukan.\n" RESET);
         }
     }
@@ -240,7 +251,8 @@ void menuPembeli(Barang daftarBarang[], int jumlahBarang, const char *transaksiF
     printf("===================================\n");
     printf("%-3s %-20s %-10s %-10s\n", "No", "Nama Barang", "Jumlah", "Total");
     printf("-----------------------------------\n");
-    for (int i = 0; i < indexPembelian; i++) {
+    for (int i = 0; i < indexPembelian; i++)
+    {
         printf("%-3d %-20s %-10d Rp%-10d\n", i + 1,
                daftarPembelian[i].nama,
                daftarPembelian[i].jumlah,
@@ -252,7 +264,8 @@ void menuPembeli(Barang daftarBarang[], int jumlahBarang, const char *transaksiF
     printf("Terima kasih telah berbelanja!\n");
 
     // Simpan transaksi ke file CSV
-    if (indexPembelian > 0) {
+    if (indexPembelian > 0)
+    {
         simpanTransaksiCSV(transaksiFile, daftarPembelian, indexPembelian, waktu);
         // Simpan stok terbaru ke file barang.csv
         simpanKeCSV(daftarBarang, jumlahBarang, barangFile);
@@ -418,6 +431,78 @@ void menuAnalisis(const char *transaksiFile, const char *barangFile)
         }
     }
 }
+void menuAnalisisBarang(Barang daftarBarang[], int jumlahBarang)
+{
+    int pilihan;
+
+    while (1)
+    {
+        printf(CYAN "\n=== Menu Analisis Barang ===\n" RESET);
+        printf("1. Barang Terlaris\n");
+        printf("2. Barang Tidak Laris\n");
+        printf("0. Kembali ke Menu Utama\n");
+        printf("Masukkan pilihan Anda: ");
+        scanf("%d", &pilihan);
+
+        switch (pilihan)
+        {
+        case 1:
+            barangTerlaris(daftarBarang, jumlahBarang);
+            break;
+        case 2:
+            barangTidakLaris(daftarBarang, jumlahBarang);
+            break;
+        case 0:
+            return;
+        default:
+            printf(RED "Pilihan tidak valid.\n" RESET);
+        }
+    }
+}
+void barangTerlaris(Barang daftarBarang[], int jumlahBarang)
+{
+    if (jumlahBarang == 0)
+    {
+        printf(YELLOW "Tidak ada data barang.\n" RESET);
+        return;
+    }
+
+    int indexTerlaris = 0;
+    for (int i = 1; i < jumlahBarang; i++)
+    {
+        if (daftarBarang[i].totalTerjual > daftarBarang[indexTerlaris].totalTerjual)
+        {
+            indexTerlaris = i;
+        }
+    }
+
+    printf(GREEN "\n=== Barang Terlaris ===\n" RESET);
+    printf("Kode: %s\n", daftarBarang[indexTerlaris].kode);
+    printf("Nama: %s\n", daftarBarang[indexTerlaris].nama);
+    printf("Total Terjual: %d unit\n", daftarBarang[indexTerlaris].totalTerjual);
+}
+void barangTidakLaris(Barang daftarBarang[], int jumlahBarang)
+{
+    if (jumlahBarang == 0)
+    {
+        printf(YELLOW "Tidak ada data barang.\n" RESET);
+        return;
+    }
+
+    int indexTidakLaris = 0;
+    for (int i = 1; i < jumlahBarang; i++)
+    {
+        if (daftarBarang[i].totalTerjual < daftarBarang[indexTidakLaris].totalTerjual)
+        {
+            indexTidakLaris = i;
+        }
+    }
+
+    printf(RED "\n=== Barang Tidak Laris ===\n" RESET);
+    printf("Kode: %s\n", daftarBarang[indexTidakLaris].kode);
+    printf("Nama: %s\n", daftarBarang[indexTidakLaris].nama);
+    printf("Total Terjual: %d unit\n", daftarBarang[indexTidakLaris].totalTerjual);
+}
 
 // Main function
 int main()
@@ -434,6 +519,7 @@ int main()
         printf("3. Tampilkan Barang\n");
         printf("4. Simpan Barang\n");
         printf("5. Analisis\n");
+        printf("6. Analisis Barang\n");
         printf("0. Keluar\n");
         printf("Masukkan pilihan: ");
         scanf("%d", &pilihan);
@@ -454,6 +540,9 @@ int main()
             break;
         case 5:
             menuAnalisis("rekap_transaksi.csv", "barang.csv");
+            break;
+        case 6:
+            menuAnalisisBarang(daftarBarang, jumlahBarang);
             break;
         case 0:
             printf(GREEN "Terima kasih!\n" RESET);
