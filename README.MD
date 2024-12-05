@@ -1,93 +1,105 @@
-# Sistem Kasir Sederhana
+# Sistem Kasir dengan Analisis Penjualan
 
-Program ini adalah aplikasi kasir sederhana yang memungkinkan pengguna untuk melakukan pembelian barang dan mendapatkan invoice (nota) pembelian. Program ini ditulis menggunakan bahasa C.
-
-## Fitur
-
-1. Daftar barang yang tersedia dalam sistem dengan kode unik, nama, dan harga.
-2. Pengguna dapat memasukkan kode barang dan jumlah yang dibeli.
-3. Program akan menampilkan daftar barang yang dibeli beserta total harga dalam format invoice.
-4. Jika pengguna selesai berbelanja, mereka dapat mengetik `selesai` untuk menampilkan invoice dan menyelesaikan transaksi.
-
-## Struktur Data
-
-- `struct Barang`: Menyimpan informasi barang, seperti kode, nama, dan harga.
-- `struct Pembelian`: Menyimpan informasi barang yang dibeli, seperti nama, harga, dan jumlah yang dibeli.
+Program ini merupakan sistem kasir berbasis teks yang dapat digunakan untuk mengelola barang, mencatat transaksi, dan menganalisis data penjualan.
 
 ## Cara Penggunaan
 
-### Prasyarat
+1. **Persiapan File CSV**:
+   - Pastikan Anda memiliki file `barang.csv` dengan format berikut:
+     ```
+     Kode,Nama Barang,Harga Jual,Stok,Harga Beli,Total Terjual
+     ```
+   - File ini akan dibuat secara otomatis jika tidak ditemukan.
 
-Pastikan kamu memiliki compiler C seperti `gcc` yang sudah terinstall pada sistem kamu.
+2. **Menjalankan Program**:
+   - Kompilasi program menggunakan GCC:
+     ```bash
+     gcc program.c -o main
+     ```
+   - Jalankan program:
+     ./main
+     ```
 
-### Langkah-langkah
-
-1. Clone atau unduh program ini ke dalam komputer.
-2. Buka terminal atau command prompt.
-3. Kompilasi program menggunakan perintah berikut:
-
-   ```bash
-   gcc -o main main.c
+3. **Navigasi Menu**:
+   Setelah program dijalankan, Anda akan melihat menu utama:
    ```
-
-4. Jalankan program menggunakan perintah:
-
-   ```bash
-   ./main
+   === Menu Utama ===
+   1. Pembeli
+   2. Tambah Barang
+   3. Tampilkan Barang
+   4. Simpan Barang
+   5. Analisis
+   6. Analisis Barang
+   0. Keluar
    ```
+   ```
+   Masukkan angka sesuai pilihan menu:
+   - **1. Pembeli**: Fitur kasir untuk mencatat transaksi.
+   - **2. Tambah Barang**: Tambahkan barang baru ke daftar.
+   - **3. Tampilkan Barang**: Tampilkan daftar barang yang tersedia.
+   - **4. Simpan Barang**: Simpan daftar barang ke file `barang.csv`.
+   - **5. Analisis**: Analisis penjualan mingguan, bulanan, tahunan, dan stok barang.
+   - **6. Analisis Barang**: Menampilkan barang terlaris dan tidak laris.
+   - **0. Keluar**: Keluar dari program.
 
-### Alur Penggunaan
+4. **Fitur Kasir**:
+   - Pilih **1. Pembeli** dari menu utama.
+   - Masukkan kode barang yang ingin dibeli.
+   - Masukkan jumlah barang.
+   - Ketik `selesai` untuk menyelesaikan transaksi dan mencetak invoice.
 
-1. Setelah menjalankan program, kamu akan melihat tampilan judul **Sistem Kasir**.
-2. Masukkan **kode barang** yang ingin dibeli dari daftar barang yang tersedia. Daftar barang yang tersedia adalah sebagai berikut:
-   - `BRG001` : Beras
-   - `BRG002` : Gula
-   - `BRG003` : Minyak
-   - `BRG004` : Telur
-   - `BRG005` : Susu
-   - `BRG006` : Rokok
-   - `BRG007` : Shampo
-   - `BRG008` : Sabun
-   - `BRG009` : Pasta Gigi
-   - `BRG010` : Sikat
-   - `BRG011` : Minuman
-   - `BRG012` : Jamu
+5. **Menyimpan Data**:
+   - Setiap transaksi disimpan dalam file `rekap_transaksi.csv`.
+   - Stok barang yang diperbarui disimpan kembali ke `barang.csv`.
 
-3. Setelah memasukkan kode barang, masukkan **jumlah barang** yang ingin dibeli.
-4. Lanjutkan memasukkan kode barang berikutnya jika ingin membeli lebih banyak barang.
-5. Jika sudah selesai berbelanja, ketik `selesai` untuk menyelesaikan transaksi.
-6. Program akan menampilkan **invoice** yang berisi daftar barang yang dibeli beserta total harga.
+## Penjelasan Fitur Utama
 
-### Contoh Penggunaan
+- **Manajemen Barang**:
+  - Data barang dimuat dari file `barang.csv` saat program dijalankan.
+  - Barang baru dapat ditambahkan melalui menu **Tambah Barang**.
+  - Stok barang diperbarui otomatis setelah transaksi.
 
-Berikut adalah contoh penggunaan:
+- **Fitur Kasir**:
+  - Program mencatat setiap pembelian dan menghasilkan invoice.
+  - Stok barang otomatis berkurang sesuai jumlah pembelian.
 
+- **Analisis Penjualan**:
+  - **Mingguan**: Menampilkan total penjualan dan laba/rugi dalam 7 hari terakhir.
+  - **Bulanan**: Menampilkan total penjualan dan laba/rugi pada bulan tertentu.
+  - **Tahunan**: Rekap penjualan dan laba/rugi tahunan.
+
+- **Analisis Barang**:
+  - **Barang Terlaris**: Barang dengan jumlah penjualan tertinggi.
+  - **Barang Tidak Laris**: Barang dengan jumlah penjualan terendah.
+
+## Contoh Output
+
+### Menu Utama
 ```
-=== Sistem Kasir Sederhana ===
+=== Menu Utama ===
+1. Pembeli
+2. Tambah Barang
+3. Tampilkan Barang
+4. Simpan Barang
+5. Analisis
+6. Analisis Barang
+0. Keluar
+Masukkan pilihan: 
 
-Masukkan kode barang (atau ketik 'selesai' untuk menyelesaikan transaksi): BRG001
-Barang ditemukan: Beras - Harga: Rp10000
-Masukkan jumlah barang yang dibeli: 2
-
-Masukkan kode barang (atau ketik 'selesai' untuk menyelesaikan transaksi): BRG003
-Barang ditemukan: Minyak - Harga: Rp20000
-Masukkan jumlah barang yang dibeli: 1
-
-Masukkan kode barang (atau ketik 'selesai' untuk menyelesaikan transaksi): selesai
+### Invoice Pembelian
 
 ===================================
             INVOICE PEMBELIAN
 ===================================
-No  Nama Barang         Jumlah    Total     
+No  Nama Barang          Jumlah    Total     
 -----------------------------------
-1   Beras               2         Rp20000    
-2   Minyak              1         Rp20000    
+1   Sabun                3         Rp15000   
+2   Pasta Gigi           2         Rp20000   
 -----------------------------------
-Total Belanja                      Rp40000    
+Total Belanja                        Rp35000  
 ===================================
 Terima kasih telah berbelanja!
 ```
-
-## Lisensi
-
-Program ini dibuat untuk tujuan pembelajaran dan uts 
+## Catatan
+- Program ini menggunakan format warna ANSI untuk memberikan tampilan yang lebih menarik di terminal.
+- Pastikan Anda menjalankan program di terminal yang mendukung kode warna ANSI.
